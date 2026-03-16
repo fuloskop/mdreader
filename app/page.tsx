@@ -152,7 +152,7 @@ export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [handleIntro, setHandleIntro] = useState(false);
-  const [themeId, setThemeId] = useState("paper");
+  const [themeId, setThemeId] = useState("soft-dark");
   const [locale, setLocale] = useState<Locale>("en");
   const [contentWidth, setContentWidth] = useState(768);
   const resizingRef = useRef(false);
@@ -169,7 +169,7 @@ export default function Home() {
       setThemeId(th.id);
       applyTheme(th);
     } else {
-      applyTheme(getTheme("paper"));
+      applyTheme(getTheme("soft-dark"));
     }
     const savedLocale = localStorage.getItem("mdreader-locale");
     if (savedLocale && locales.includes(savedLocale as Locale)) {

@@ -24,16 +24,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" suppressHydrationWarning style={{ visibility: "hidden" }}>
+    <html lang="tr" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){
-var h=document.documentElement,s=h.style;
 try{
 var t=localStorage.getItem("mdreader-theme-id");
+if(!t||t==="soft-dark")return;
 var m={paper:{bg:"#FAFAFA",c:"#1A1A2E",hd:"#0F0F1A",mu:"#6B7280",lk:"#2563EB",cb:"#F0F0F5",bd:"#E2E4E9",pb:"#E2E4E9",bb:"#F5F5FA",bc:"#D0D4E0",th:"#F0F0F5"},sepia:{bg:"#FBF0D9",c:"#5C4B37",hd:"#3E2F20",mu:"#8B7355",lk:"#7C4D1A",cb:"#F0E4C8",bd:"#E6D5B8",pb:"#E6D5B8",bb:"#F5EBD4",bc:"#D4C09A",th:"#F0E4C8"},sage:{bg:"#EEF1E6",c:"#37422A",hd:"#2A331F",mu:"#6B7A5E",lk:"#4A6741",cb:"#E2E8D5",bd:"#CDD5BC",pb:"#CDD5BC",bb:"#E5EAD9",bc:"#B5C09A",th:"#E2E8D5"},"soft-dark":{bg:"#1A1B23",c:"#CDD5E0",hd:"#E4E8EF",mu:"#8891A0",lk:"#7DAED4",cb:"#22242E",bd:"#2E3140",pb:"#2E3140",bb:"#20222C",bc:"#3A4058",th:"#22242E"},oled:{bg:"#000000",c:"#D4D4D4",hd:"#E8E8E8",mu:"#7A7A7A",lk:"#6DB3F2",cb:"#111111",bd:"#222222",pb:"#222222",bb:"#0A0A0A",bc:"#333333",th:"#111111"},dusk:{bg:"#1C1917",c:"#D6CEBF",hd:"#E8E0D0",mu:"#8C8478",lk:"#C4915C",cb:"#252119",bd:"#33302A",pb:"#33302A",bb:"#221F19",bc:"#4A4238",th:"#252119"}};
-var d=t&&m[t]?m[t]:m.paper;
+var d=m[t];if(!d)return;
+var s=document.documentElement.style;
 s.setProperty("--theme-bg",d.bg);
 s.setProperty("--theme-text",d.c);
 s.setProperty("--theme-heading",d.hd);
@@ -45,9 +46,8 @@ s.setProperty("--theme-pre-border",d.pb);
 s.setProperty("--theme-blockquote-bg",d.bb);
 s.setProperty("--theme-blockquote-border",d.bc);
 s.setProperty("--theme-table-head-bg",d.th);
-}catch(e){}
-s.visibility="visible";
-})()`,
+document.documentElement.style.background=d.bg;
+}catch(e){}})()`,
           }}
         />
       </head>

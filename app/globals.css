@@ -8,8 +8,12 @@
 
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
-  background: var(--theme-bg, #FAFAFA);
-  color: var(--theme-text, #1A1A2E);
+  background: var(--theme-bg, #1A1B23);
+  color: var(--theme-text, #CDD5E0);
+}
+
+html {
+  background: #1A1B23;
 }
 
 /* Transition only after first paint — added by JS */

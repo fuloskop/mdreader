@@ -8,9 +8,14 @@
 
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
   background: var(--theme-bg, #FAFAFA);
   color: var(--theme-text, #1A1A2E);
+}
+
+/* Transition only after first paint — added by JS */
+body.theme-ready,
+body.theme-ready * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* ── Prose: driven by CSS variables set per theme ── */

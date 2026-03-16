@@ -12,7 +12,8 @@ interface MdFile {
 }
 
 function applyTheme(theme: Theme) {
-  const s = document.documentElement.style;
+  const h = document.documentElement;
+  const s = h.style;
   s.setProperty("--theme-bg", theme.bg);
   s.setProperty("--theme-text", theme.text);
   s.setProperty("--theme-heading", theme.heading);
@@ -24,6 +25,9 @@ function applyTheme(theme: Theme) {
   s.setProperty("--theme-blockquote-bg", theme.blockquoteBg);
   s.setProperty("--theme-blockquote-border", theme.blockquoteBorder);
   s.setProperty("--theme-table-head-bg", theme.tableHeadBg);
+  // Also set on html element directly for immediate effect
+  h.style.background = theme.bg;
+  h.style.color = theme.text;
 }
 
 function ThemePicker({
@@ -181,6 +185,11 @@ export default function Home() {
     if (savedWidth) {
       setContentWidth(Math.max(400, Math.min(1400, parseInt(savedWidth))));
     }
+
+    // Enable transitions only after first paint
+    requestAnimationFrame(() => {
+      document.body.classList.add("theme-ready");
+    });
 
     const onPaste = (e: ClipboardEvent) => {
       const clipFiles = e.clipboardData?.files;

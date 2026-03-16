@@ -1,0 +1,5 @@
+# https://lookmd.dev
+User-agent: *
+Allow: /
+
+Sitemap: https://lookmd.dev/sitemap.xml

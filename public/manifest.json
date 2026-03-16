@@ -1,0 +1,19 @@
+{
+  "name": "LookMD — Privacy-First Markdown Reader",
+  "short_name": "LookMD",
+  "description": "Read Markdown files beautifully in your browser. No uploads, no tracking, no cookies.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1A1B23",
+  "theme_color": "#1A1B23",
+  "orientation": "any",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

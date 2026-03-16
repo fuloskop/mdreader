@@ -637,7 +637,7 @@ export default function Home() {
                 <div
                   onMouseDown={(e) => startResize(e, "right")}
                   className={`resize-handle absolute top-0 h-full w-14 cursor-col-resize hidden md:flex items-start justify-center${handleIntro ? " intro-active" : ""}`}
-                  style={{ right: `calc(50% - ${contentWidth / 2 + 28}px)` }}
+                  style={{ right: `calc(50% - ${contentWidth / 2 + 44}px)` }}
                 >
                   <div className="sticky top-1/2 flex items-center gap-2">
                     {/* Grip dots column */}
@@ -667,7 +667,7 @@ export default function Home() {
                 <div
                   onMouseDown={(e) => startResize(e, "left")}
                   className={`resize-handle absolute top-0 h-full w-14 cursor-col-resize hidden md:flex items-start justify-center${handleIntro ? " intro-active" : ""}`}
-                  style={{ left: `calc(50% - ${contentWidth / 2 + 28}px)` }}
+                  style={{ left: `calc(50% - ${contentWidth / 2 + 44}px)` }}
                 >
                   <div className="sticky top-1/2 flex items-center gap-2">
                     {/* Pull arrow */}

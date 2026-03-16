@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,10 +12,71 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#1A1B23" },
+    { media: "(prefers-color-scheme: light)", color: "#FAFAFA" },
+  ],
+};
+
 export const metadata: Metadata = {
-  title: "MD Reader — Gizlilik Oncelikli Markdown Okuyucu",
+  metadataBase: new URL("https://lookmd.dev"),
+  title: "LookMD — Privacy-First Markdown Reader",
   description:
-    "Markdown dosyalarınızı tarayıcınızda okuyun. Dosyalarınız asla sunucuya gönderilmez.",
+    "Read and preview Markdown files beautifully in your browser. No uploads, no tracking, no cookies. 100% client-side — your files never leave your device.",
+  keywords: [
+    "markdown reader",
+    "markdown viewer",
+    "markdown preview",
+    "md reader",
+    "md viewer",
+    "privacy markdown",
+    "offline markdown reader",
+    "browser markdown reader",
+    "github flavored markdown",
+    "gfm viewer",
+    "markdown dosya okuyucu",
+    "markdown renderer",
+    "client-side markdown",
+    "no upload markdown",
+    "free markdown reader",
+  ],
+  applicationName: "LookMD",
+  authors: [{ name: "LookMD", url: "https://lookmd.dev" }],
+  creator: "LookMD",
+  publisher: "LookMD",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    url: "https://lookmd.dev",
+    title: "LookMD — Privacy-First Markdown Reader",
+    description:
+      "Read and preview Markdown files beautifully in your browser. No uploads, no tracking, no cookies. Your files never leave your device.",
+    siteName: "LookMD",
+    locale: "en_US",
+    alternateLocale: ["tr_TR", "es_ES", "fr_FR", "de_DE", "pt_BR", "ja_JP", "ko_KR", "zh_CN"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LookMD — Privacy-First Markdown Reader",
+    description:
+      "Read Markdown files beautifully in your browser. No uploads, no tracking, no cookies.",
+  },
+  alternates: {
+    canonical: "https://lookmd.dev",
+  },
+  category: "Utility",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -24,8 +85,46 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "LookMD",
+              url: "https://lookmd.dev",
+              description:
+                "Privacy-first Markdown reader. Read your Markdown files beautifully in your browser with zero data collection.",
+              applicationCategory: "UtilityApplication",
+              operatingSystem: "All",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              browserRequirements: "Requires a modern web browser",
+              featureList: [
+                "Client-side Markdown rendering",
+                "GitHub Flavored Markdown support",
+                "Zero data collection",
+                "No cookies or tracking",
+                "Drag and drop file upload",
+                "Paste from clipboard",
+                "6 beautiful reading themes",
+                "18 language support",
+                "Resizable content width",
+                "Multiple file tabs",
+              ],
+              inLanguage: [
+                "en", "tr", "es", "fr", "de", "pt",
+                "ru", "zh", "ja", "ko", "ar", "hi",
+                "it", "nl", "pl", "uk", "sv", "id",
+              ],
+            }),
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){

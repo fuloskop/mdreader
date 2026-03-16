@@ -374,8 +374,8 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen flex flex-col transition-colors duration-300"
-      style={{ background: theme.bg, color: theme.text }}
+      className="min-h-screen flex flex-col"
+      style={{ background: "var(--theme-bg)", color: "var(--theme-text)" }}
     >
       {/* Header */}
       <header

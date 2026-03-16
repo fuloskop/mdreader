@@ -260,8 +260,8 @@ export default function Home() {
 
   const activeFile = files[activeIndex] ?? null;
 
-  const signalColor = dark ? theme.link : theme.link;
-  const gripColor = dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)";
+  const gripDotColor = dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.18)";
+  const glowColor = theme.link;
 
   return (
     <div
@@ -527,35 +527,29 @@ export default function Home() {
                 {/* Right resize handle */}
                 <div
                   onMouseDown={(e) => startResize(e, "right")}
-                  className="resize-handle absolute top-0 h-full w-8 cursor-col-resize hidden md:flex items-start justify-center"
-                  style={{ right: `calc(50% - ${contentWidth / 2 + 16}px)` }}
-                  title="Drag to resize"
+                  className="resize-handle absolute top-0 h-full w-14 cursor-col-resize hidden md:flex items-start justify-center"
+                  style={{ right: `calc(50% - ${contentWidth / 2 + 28}px)` }}
                 >
-                  <div className="sticky top-1/2 flex items-center gap-[3px]">
-                    <div
-                      className="grip-bar w-[5px] h-16 rounded-full"
-                      style={{ background: gripColor }}
-                    />
-                    <div className="flex items-center gap-[2px]">
-                      {[0, 1, 2].map((j) => (
-                        <div
-                          key={j}
-                          className="signal-line"
-                          style={{
-                            animationName: "signal-right",
-                            animationDelay: `${j * 0.25}s`,
-                          }}
-                        >
-                          <div
-                            className="rounded-full"
-                            style={{
-                              width: 2,
-                              height: 20 + j * 10,
-                              background: signalColor,
-                            }}
-                          />
+                  <div className="sticky top-1/2 flex items-center gap-2">
+                    {/* Grip dots column */}
+                    <div className="grip-dots flex flex-col gap-[6px] items-center">
+                      {[0, 1, 2, 3, 4, 5, 6, 7].map((j) => (
+                        <div key={j} className="flex gap-[4px]">
+                          <div className="w-[4px] h-[4px] rounded-full" style={{ background: gripDotColor }} />
+                          <div className="w-[4px] h-[4px] rounded-full" style={{ background: gripDotColor }} />
                         </div>
                       ))}
+                    </div>
+                    {/* Glow line */}
+                    <div
+                      className="glow-line w-[3px] h-20 rounded-full"
+                      style={{ background: glowColor, boxShadow: `0 0 8px ${glowColor}` }}
+                    />
+                    {/* Pull arrow */}
+                    <div className="pull-arrow pull-right">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={glowColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 6l6 6-6 6" />
+                      </svg>
                     </div>
                   </div>
                 </div>
@@ -563,36 +557,30 @@ export default function Home() {
                 {/* Left resize handle */}
                 <div
                   onMouseDown={(e) => startResize(e, "left")}
-                  className="resize-handle absolute top-0 h-full w-8 cursor-col-resize hidden md:flex items-start justify-center"
-                  style={{ left: `calc(50% - ${contentWidth / 2 + 16}px)` }}
-                  title="Drag to resize"
+                  className="resize-handle absolute top-0 h-full w-14 cursor-col-resize hidden md:flex items-start justify-center"
+                  style={{ left: `calc(50% - ${contentWidth / 2 + 28}px)` }}
                 >
-                  <div className="sticky top-1/2 flex items-center gap-[3px]">
-                    <div className="flex items-center gap-[2px] flex-row-reverse">
-                      {[0, 1, 2].map((j) => (
-                        <div
-                          key={j}
-                          className="signal-line"
-                          style={{
-                            animationName: "signal-left",
-                            animationDelay: `${j * 0.25}s`,
-                          }}
-                        >
-                          <div
-                            className="rounded-full"
-                            style={{
-                              width: 2,
-                              height: 20 + j * 10,
-                              background: signalColor,
-                            }}
-                          />
+                  <div className="sticky top-1/2 flex items-center gap-2">
+                    {/* Pull arrow */}
+                    <div className="pull-arrow pull-left">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={glowColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 6l-6 6 6 6" />
+                      </svg>
+                    </div>
+                    {/* Glow line */}
+                    <div
+                      className="glow-line w-[3px] h-20 rounded-full"
+                      style={{ background: glowColor, boxShadow: `0 0 8px ${glowColor}` }}
+                    />
+                    {/* Grip dots column */}
+                    <div className="grip-dots flex flex-col gap-[6px] items-center">
+                      {[0, 1, 2, 3, 4, 5, 6, 7].map((j) => (
+                        <div key={j} className="flex gap-[4px]">
+                          <div className="w-[4px] h-[4px] rounded-full" style={{ background: gripDotColor }} />
+                          <div className="w-[4px] h-[4px] rounded-full" style={{ background: gripDotColor }} />
                         </div>
                       ))}
                     </div>
-                    <div
-                      className="grip-bar w-[5px] h-16 rounded-full"
-                      style={{ background: gripColor }}
-                    />
                   </div>
                 </div>
               </div>

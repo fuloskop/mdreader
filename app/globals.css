@@ -90,48 +90,76 @@ body {
   border-radius: 0.75rem;
 }
 
-/* ── Resize handle signal animation ── */
-@keyframes signal-right {
-  0% { opacity: 0; transform: translateX(-2px); }
-  30% { opacity: 1; transform: translateX(0); }
-  70% { opacity: 1; transform: translateX(0); }
-  100% { opacity: 0; transform: translateX(4px); }
+/* ── Resize handle ── */
+
+/* Grip dots: always visible with gentle pulse */
+@keyframes grip-breathe {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.6; }
 }
 
-@keyframes signal-left {
-  0% { opacity: 0; transform: translateX(2px); }
-  30% { opacity: 1; transform: translateX(0); }
-  70% { opacity: 1; transform: translateX(0); }
-  100% { opacity: 0; transform: translateX(-4px); }
+.resize-handle .grip-dots {
+  animation: grip-breathe 3s ease-in-out infinite;
+  transition: opacity 0.2s, transform 0.2s;
 }
 
-.resize-handle .signal-line {
-  animation-duration: 1.8s;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-out;
-  opacity: 0;
-}
-
-.resize-handle:hover .signal-line,
-.resize-handle:active .signal-line {
-  animation-play-state: running;
-}
-
-.resize-handle .signal-line {
-  animation-play-state: paused;
-}
-
-@keyframes idle-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-
-.resize-handle .grip-bar {
-  animation: idle-pulse 2.5s ease-in-out infinite;
-}
-
-.resize-handle:hover .grip-bar,
-.resize-handle:active .grip-bar {
+.resize-handle:hover .grip-dots {
   animation: none;
   opacity: 1;
+  transform: scale(1.15);
+}
+
+.resize-handle:active .grip-dots {
+  animation: none;
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Arrow that slides outward on hover — "drag me" hint */
+@keyframes pull-right {
+  0% { opacity: 0; transform: translateX(0); }
+  20% { opacity: 1; transform: translateX(4px); }
+  60% { opacity: 1; transform: translateX(8px); }
+  100% { opacity: 0; transform: translateX(14px); }
+}
+
+@keyframes pull-left {
+  0% { opacity: 0; transform: translateX(0); }
+  20% { opacity: 1; transform: translateX(-4px); }
+  60% { opacity: 1; transform: translateX(-8px); }
+  100% { opacity: 0; transform: translateX(-14px); }
+}
+
+.resize-handle .pull-arrow {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.resize-handle:hover .pull-arrow {
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-out;
+}
+
+.resize-handle:hover .pull-arrow.pull-right {
+  animation-name: pull-right;
+}
+
+.resize-handle:hover .pull-arrow.pull-left {
+  animation-name: pull-left;
+}
+
+/* Glow line on hover */
+.resize-handle .glow-line {
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.resize-handle:hover .glow-line {
+  opacity: 1;
+}
+
+.resize-handle:active .glow-line {
+  opacity: 1;
+  filter: brightness(1.3);
 }

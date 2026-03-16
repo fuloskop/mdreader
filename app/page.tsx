@@ -391,7 +391,7 @@ export default function Home() {
               setFiles([]);
               setActiveIndex(0);
             }}
-            className="text-lg font-semibold tracking-tight transition-colors"
+            className="text-lg font-semibold tracking-tight transition-colors cursor-pointer"
             style={{ color: theme.heading }}
           >
             MD Reader
@@ -473,7 +473,7 @@ export default function Home() {
 
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-2 px-6 py-3 text-white rounded-xl text-sm font-medium hover:brightness-110 active:scale-[0.98] transition-all shadow-sm"
+                className="inline-flex items-center gap-2 px-6 py-3 text-white rounded-xl text-sm font-medium hover:brightness-110 active:scale-[0.98] transition-all shadow-sm cursor-pointer"
                 style={{
                   background: theme.link,
                   boxShadow: `0 2px 8px color-mix(in srgb, ${theme.link} 25%, transparent)`,

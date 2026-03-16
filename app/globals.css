@@ -1,61 +1,67 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-:root {
-  --background: #fafaf9;
-  --foreground: #1c1917;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0c0a09;
-    --foreground: #e7e5e4;
-  }
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-/* Prose overrides for clean reading */
+/* ── Light (default) ── */
+body {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+/* ── Dark ── */
+body.dark {
+  background: #111111;
+  color: #e5e5e5;
+}
+
+/* ── Prose: Light ── */
 .prose {
-  --tw-prose-body: #44403c;
-  --tw-prose-headings: #1c1917;
-  --tw-prose-links: #1c1917;
-  --tw-prose-code: #1c1917;
-  --tw-prose-pre-bg: #f5f5f4;
-  --tw-prose-pre-code: #44403c;
-  --tw-prose-th-borders: #d6d3d1;
-  --tw-prose-td-borders: #e7e5e4;
+  --tw-prose-body: #374151;
+  --tw-prose-headings: #111827;
+  --tw-prose-links: #2563eb;
+  --tw-prose-bold: #111827;
+  --tw-prose-code: #111827;
+  --tw-prose-pre-bg: #f8fafc;
+  --tw-prose-pre-code: #374151;
+  --tw-prose-th-borders: #e5e7eb;
+  --tw-prose-td-borders: #f3f4f6;
+  --tw-prose-quotes: #6b7280;
+  --tw-prose-quote-borders: #e5e7eb;
+  line-height: 1.8;
 }
 
-.dark .prose {
-  --tw-prose-body: #a8a29e;
-  --tw-prose-headings: #e7e5e4;
-  --tw-prose-links: #e7e5e4;
-  --tw-prose-code: #e7e5e4;
-  --tw-prose-pre-bg: #1c1917;
-  --tw-prose-pre-code: #a8a29e;
-  --tw-prose-th-borders: #44403c;
-  --tw-prose-td-borders: #292524;
+/* ── Prose: Dark ── */
+body.dark .prose {
+  --tw-prose-body: #c4c4c4;
+  --tw-prose-headings: #f5f5f5;
+  --tw-prose-links: #60a5fa;
+  --tw-prose-bold: #f5f5f5;
+  --tw-prose-code: #f5f5f5;
+  --tw-prose-pre-bg: #1a1a1a;
+  --tw-prose-pre-code: #c4c4c4;
+  --tw-prose-th-borders: #333;
+  --tw-prose-td-borders: #222;
+  --tw-prose-quotes: #9ca3af;
+  --tw-prose-quote-borders: #333;
 }
 
 .prose pre {
-  border-radius: 0.5rem;
-  border: 1px solid #e7e5e4;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  font-size: 0.875em;
 }
 
-.dark .prose pre {
-  border-color: #292524;
+body.dark .prose pre {
+  border-color: #2a2a2a;
 }
 
 .prose code::before,
@@ -64,25 +70,77 @@ body {
 }
 
 .prose code:not(pre code) {
-  background: #f5f5f4;
-  padding: 0.15em 0.35em;
-  border-radius: 0.25rem;
-  font-size: 0.875em;
+  background: #f1f5f9;
+  padding: 0.2em 0.4em;
+  border-radius: 0.375rem;
+  font-size: 0.85em;
+  color: #0f172a;
 }
 
-.dark .prose code:not(pre code) {
-  background: #1c1917;
+body.dark .prose code:not(pre code) {
+  background: #1e1e1e;
+  color: #e5e5e5;
 }
 
 .prose blockquote {
-  border-left-color: #d6d3d1;
+  border-left-color: #dbeafe;
+  border-left-width: 3px;
+  background: #f8fafc;
+  padding: 0.75rem 1rem;
+  border-radius: 0 0.5rem 0.5rem 0;
   font-style: normal;
+  color: #4b5563;
 }
 
-.dark .prose blockquote {
-  border-left-color: #44403c;
+body.dark .prose blockquote {
+  border-left-color: #1e3a5f;
+  background: #1a1a1a;
+  color: #9ca3af;
 }
 
 .prose table {
   font-size: 0.875em;
+}
+
+.prose thead th {
+  background: #f9fafb;
+}
+
+body.dark .prose thead th {
+  background: #1a1a1a;
+}
+
+.prose a {
+  text-decoration-color: #93c5fd;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover {
+  text-decoration-color: #2563eb;
+}
+
+body.dark .prose a {
+  text-decoration-color: #1e4b8f;
+}
+
+body.dark .prose a:hover {
+  text-decoration-color: #60a5fa;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  letter-spacing: -0.025em;
+}
+
+.prose hr {
+  border-color: #f3f4f6;
+}
+
+body.dark .prose hr {
+  border-color: #2a2a2a;
+}
+
+.prose img {
+  border-radius: 0.75rem;
 }

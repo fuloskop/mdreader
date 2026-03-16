@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MD Reader — Gizlilik Öncelikli Markdown Okuyucu",
+  title: "MD Reader — Gizlilik Oncelikli Markdown Okuyucu",
   description:
     "Markdown dosyalarınızı tarayıcınızda okuyun. Dosyalarınız asla sunucuya gönderilmez.",
 };
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>

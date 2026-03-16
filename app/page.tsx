@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { t, locales, localeNames, type Locale } from "@/lib/i18n";
 import { themes, getTheme, type Theme } from "@/lib/themes";
 
@@ -627,7 +628,7 @@ export default function Home() {
                     )}
                   </div>
                   <div className="prose prose-lg max-w-none">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                       {activeFile.content}
                     </ReactMarkdown>
                   </div>

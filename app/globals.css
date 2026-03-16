@@ -144,3 +144,50 @@ body.dark .prose hr {
 .prose img {
   border-radius: 0.75rem;
 }
+
+/* ── Resize handle signal animation ── */
+@keyframes signal-right {
+  0% { opacity: 0; transform: translateX(-2px); }
+  30% { opacity: 1; transform: translateX(0); }
+  70% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(4px); }
+}
+
+@keyframes signal-left {
+  0% { opacity: 0; transform: translateX(2px); }
+  30% { opacity: 1; transform: translateX(0); }
+  70% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-4px); }
+}
+
+.resize-handle .signal-line {
+  animation-duration: 1.8s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-out;
+  opacity: 0;
+}
+
+.resize-handle:hover .signal-line,
+.resize-handle:active .signal-line {
+  animation-play-state: running;
+}
+
+.resize-handle .signal-line {
+  animation-play-state: paused;
+}
+
+/* Idle pulse to hint draggability */
+@keyframes idle-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.resize-handle .grip-bar {
+  animation: idle-pulse 2.5s ease-in-out infinite;
+}
+
+.resize-handle:hover .grip-bar,
+.resize-handle:active .grip-bar {
+  animation: none;
+  opacity: 1;
+}

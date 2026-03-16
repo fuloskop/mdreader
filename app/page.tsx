@@ -468,17 +468,41 @@ export default function Home() {
                 {/* Right resize handle */}
                 <div
                   onMouseDown={startResize}
-                  className={`absolute top-0 h-full w-2 cursor-col-resize group hidden md:flex items-start`}
-                  style={{ right: `calc(50% - ${contentWidth / 2 + 4}px)` }}
+                  className="resize-handle absolute top-0 h-full w-8 cursor-col-resize hidden md:flex items-start justify-center"
+                  style={{ right: `calc(50% - ${contentWidth / 2 + 16}px)` }}
                   title="Drag to resize"
                 >
-                  <div
-                    className={`sticky top-1/2 w-1 h-12 rounded-full transition-colors ${
-                      dark
-                        ? "bg-gray-800 group-hover:bg-gray-600 group-active:bg-blue-500"
-                        : "bg-gray-200 group-hover:bg-gray-300 group-active:bg-blue-500"
-                    }`}
-                  />
+                  <div className="sticky top-1/2 flex items-center gap-[3px]">
+                    {/* Grip bar */}
+                    <div
+                      className={`grip-bar w-[5px] h-16 rounded-full transition-colors ${
+                        dark ? "bg-gray-700" : "bg-gray-300"
+                      }`}
+                    />
+                    {/* Signal lines going right */}
+                    <div className="flex items-center gap-[2px]">
+                      {[0, 1, 2].map((j) => (
+                        <div
+                          key={j}
+                          className="signal-line"
+                          style={{
+                            animationName: "signal-right",
+                            animationDelay: `${j * 0.25}s`,
+                          }}
+                        >
+                          <div
+                            className={`rounded-full transition-colors ${
+                              dark ? "bg-blue-400" : "bg-blue-500"
+                            }`}
+                            style={{
+                              width: 2,
+                              height: 20 + j * 10,
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Left resize handle (mirror) */}
@@ -509,17 +533,41 @@ export default function Home() {
                     window.addEventListener("mousemove", onMouseMove);
                     window.addEventListener("mouseup", onMouseUp);
                   }}
-                  className={`absolute top-0 h-full w-2 cursor-col-resize group hidden md:flex items-start`}
-                  style={{ left: `calc(50% - ${contentWidth / 2 + 4}px)` }}
+                  className="resize-handle absolute top-0 h-full w-8 cursor-col-resize hidden md:flex items-start justify-center"
+                  style={{ left: `calc(50% - ${contentWidth / 2 + 16}px)` }}
                   title="Drag to resize"
                 >
-                  <div
-                    className={`sticky top-1/2 w-1 h-12 rounded-full transition-colors ${
-                      dark
-                        ? "bg-gray-800 group-hover:bg-gray-600 group-active:bg-blue-500"
-                        : "bg-gray-200 group-hover:bg-gray-300 group-active:bg-blue-500"
-                    }`}
-                  />
+                  <div className="sticky top-1/2 flex items-center gap-[3px]">
+                    {/* Signal lines going left */}
+                    <div className="flex items-center gap-[2px] flex-row-reverse">
+                      {[0, 1, 2].map((j) => (
+                        <div
+                          key={j}
+                          className="signal-line"
+                          style={{
+                            animationName: "signal-left",
+                            animationDelay: `${j * 0.25}s`,
+                          }}
+                        >
+                          <div
+                            className={`rounded-full transition-colors ${
+                              dark ? "bg-blue-400" : "bg-blue-500"
+                            }`}
+                            style={{
+                              width: 2,
+                              height: 20 + j * 10,
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    {/* Grip bar */}
+                    <div
+                      className={`grip-bar w-[5px] h-16 rounded-full transition-colors ${
+                        dark ? "bg-gray-700" : "bg-gray-300"
+                      }`}
+                    />
+                  </div>
                 </div>
               </div>
             )}

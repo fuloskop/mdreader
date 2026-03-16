@@ -108,16 +108,20 @@ function LangSelect({
   onChange: (l: Locale) => void;
   theme: Theme;
 }) {
+  const arrowColor = theme.muted.replace("#", "%23");
+
   return (
     <select
       value={locale}
       onChange={(e) => onChange(e.target.value as Locale)}
-      className="text-xs rounded-lg px-2 py-1.5 border transition-colors cursor-pointer appearance-none pr-6 bg-no-repeat bg-[length:12px] bg-[position:right_6px_center]"
+      className="text-xs rounded-lg px-2.5 py-1.5 border transition-colors cursor-pointer appearance-none pr-7 bg-no-repeat"
       style={{
         background: theme.category === "dark" ? "#2a2a2a" : "#ffffff",
         borderColor: theme.border,
         color: theme.muted,
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(theme.muted)}' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${arrowColor}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+        backgroundSize: "10px",
+        backgroundPosition: "right 8px center",
       }}
     >
       {locales.map((l) => (

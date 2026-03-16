@@ -26,7 +26,7 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
-/* Markdown prose overrides */
+/* Prose overrides for clean reading */
 .prose {
   --tw-prose-body: #44403c;
   --tw-prose-headings: #1c1917;
@@ -74,10 +74,6 @@ body {
   background: #1c1917;
 }
 
-.prose table {
-  font-size: 0.875em;
-}
-
 .prose blockquote {
   border-left-color: #d6d3d1;
   font-style: normal;
@@ -85,4 +81,8 @@ body {
 
 .dark .prose blockquote {
   border-left-color: #44403c;
+}
+
+.prose table {
+  font-size: 0.875em;
 }

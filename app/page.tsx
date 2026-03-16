@@ -181,6 +181,55 @@ export default function Home() {
     if (savedWidth) {
       setContentWidth(Math.max(400, Math.min(1400, parseInt(savedWidth))));
     }
+
+    const onPaste = (e: ClipboardEvent) => {
+      const clipFiles = e.clipboardData?.files;
+      if (clipFiles && clipFiles.length > 0) {
+        // Pasted file(s) from file manager (Ctrl+C on file, Ctrl+V here)
+        const mdFiles = Array.from(clipFiles).filter(
+          (f) => f.name.endsWith(".md") || f.name.endsWith(".markdown")
+        );
+        if (mdFiles.length > 0) {
+          const dt = new DataTransfer();
+          mdFiles.forEach((f) => dt.items.add(f));
+          handleFilesFromPaste(dt.files);
+          e.preventDefault();
+          return;
+        }
+      }
+      // Pasted text — treat as markdown content
+      const text = e.clipboardData?.getData("text/plain");
+      if (text && text.trim().length > 0) {
+        // Don't hijack paste if user is in an input/select
+        const tag = (e.target as HTMLElement)?.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+        const timestamp = new Date().toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        const newFile: MdFile = {
+          name: `pasted-${timestamp}.md`,
+          content: text,
+        };
+        setFiles((prev) => {
+          const isFirst = prev.length === 0;
+          if (isFirst) {
+            setActiveIndex(0);
+            setHandleIntro(true);
+            setTimeout(() => setHandleIntro(false), 10000);
+          } else {
+            setActiveIndex(prev.length);
+          }
+          return [...prev, newFile];
+        });
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
   }, []);
 
   const changeTheme = (id: string) => {
@@ -193,6 +242,37 @@ export default function Home() {
   const changeLocale = (l: Locale) => {
     setLocale(l);
     localStorage.setItem("mdreader-locale", l);
+  };
+
+  const handleFilesFromPaste = (fileList: FileList) => {
+    const mdFiles = Array.from(fileList).filter(
+      (f) => f.name.endsWith(".md") || f.name.endsWith(".markdown")
+    );
+    if (mdFiles.length === 0) return;
+
+    Promise.all(
+      mdFiles.map(
+        (f) =>
+          new Promise<MdFile>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () =>
+              resolve({ name: f.name, content: reader.result as string });
+            reader.readAsText(f);
+          })
+      )
+    ).then((newFiles) => {
+      setFiles((prev) => {
+        const isFirst = prev.length === 0;
+        const existingNames = new Set(prev.map((p) => p.name));
+        const unique = newFiles.filter((f) => !existingNames.has(f.name));
+        if (isFirst && unique.length > 0) {
+          setActiveIndex(0);
+          setHandleIntro(true);
+          setTimeout(() => setHandleIntro(false), 10000);
+        }
+        return [...prev, ...unique];
+      });
+    });
   };
 
   const handleFiles = useCallback(

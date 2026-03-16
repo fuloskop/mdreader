@@ -108,28 +108,38 @@ function LangSelect({
   onChange: (l: Locale) => void;
   theme: Theme;
 }) {
-  const arrowColor = theme.muted.replace("#", "%23");
-
   return (
-    <select
-      value={locale}
-      onChange={(e) => onChange(e.target.value as Locale)}
-      className="text-xs rounded-lg px-2.5 py-1.5 border transition-colors cursor-pointer appearance-none pr-7 bg-no-repeat"
-      style={{
-        background: theme.category === "dark" ? "#2a2a2a" : "#ffffff",
-        borderColor: theme.border,
-        color: theme.muted,
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${arrowColor}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-        backgroundSize: "10px",
-        backgroundPosition: "right 8px center",
-      }}
-    >
-      {locales.map((l) => (
-        <option key={l} value={l}>
-          {localeNames[l]}
-        </option>
-      ))}
-    </select>
+    <div className="relative inline-flex items-center">
+      <select
+        value={locale}
+        onChange={(e) => onChange(e.target.value as Locale)}
+        className="text-xs rounded-lg pl-2.5 pr-7 py-1.5 border transition-colors cursor-pointer appearance-none"
+        style={{
+          background: theme.category === "dark" ? "#2a2a2a" : "#ffffff",
+          borderColor: theme.border,
+          color: theme.muted,
+        }}
+      >
+        {locales.map((l) => (
+          <option key={l} value={l}>
+            {localeNames[l]}
+          </option>
+        ))}
+      </select>
+      <svg
+        width="10"
+        height="10"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={theme.muted}
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="absolute right-2 pointer-events-none"
+      >
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+    </div>
   );
 }
 
@@ -137,6 +147,7 @@ export default function Home() {
   const [files, setFiles] = useState<MdFile[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [dragging, setDragging] = useState(false);
+  const [handleIntro, setHandleIntro] = useState(false);
   const [themeId, setThemeId] = useState("paper");
   const [locale, setLocale] = useState<Locale>("en");
   const [contentWidth, setContentWidth] = useState(768);
@@ -207,7 +218,12 @@ export default function Home() {
           const unique = newFiles.filter((f) => !existingNames.has(f.name));
           return [...prev, ...unique];
         });
-        if (files.length === 0) setActiveIndex(0);
+        if (files.length === 0) {
+          setActiveIndex(0);
+          // Show handle animation for 10s on first file open
+          setHandleIntro(true);
+          setTimeout(() => setHandleIntro(false), 10000);
+        }
       });
     },
     [files.length]
@@ -531,7 +547,7 @@ export default function Home() {
                 {/* Right resize handle */}
                 <div
                   onMouseDown={(e) => startResize(e, "right")}
-                  className="resize-handle absolute top-0 h-full w-14 cursor-col-resize hidden md:flex items-start justify-center"
+                  className={`resize-handle absolute top-0 h-full w-14 cursor-col-resize hidden md:flex items-start justify-center${handleIntro ? " intro-active" : ""}`}
                   style={{ right: `calc(50% - ${contentWidth / 2 + 28}px)` }}
                 >
                   <div className="sticky top-1/2 flex items-center gap-2">
@@ -561,7 +577,7 @@ export default function Home() {
                 {/* Left resize handle */}
                 <div
                   onMouseDown={(e) => startResize(e, "left")}
-                  className="resize-handle absolute top-0 h-full w-14 cursor-col-resize hidden md:flex items-start justify-center"
+                  className={`resize-handle absolute top-0 h-full w-14 cursor-col-resize hidden md:flex items-start justify-center${handleIntro ? " intro-active" : ""}`}
                   style={{ left: `calc(50% - ${contentWidth / 2 + 28}px)` }}
                 >
                   <div className="sticky top-1/2 flex items-center gap-2">

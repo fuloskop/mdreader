@@ -103,7 +103,8 @@ body {
   transition: opacity 0.2s, transform 0.2s;
 }
 
-.resize-handle:hover .grip-dots {
+.resize-handle:hover .grip-dots,
+.resize-handle.intro-active .grip-dots {
   animation: none;
   opacity: 1;
   transform: scale(1.15);
@@ -135,17 +136,20 @@ body {
   transition: opacity 0.2s;
 }
 
-.resize-handle:hover .pull-arrow {
+.resize-handle:hover .pull-arrow,
+.resize-handle.intro-active .pull-arrow {
   animation-duration: 1.4s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-out;
 }
 
-.resize-handle:hover .pull-arrow.pull-right {
+.resize-handle:hover .pull-arrow.pull-right,
+.resize-handle.intro-active .pull-arrow.pull-right {
   animation-name: pull-right;
 }
 
-.resize-handle:hover .pull-arrow.pull-left {
+.resize-handle:hover .pull-arrow.pull-left,
+.resize-handle.intro-active .pull-arrow.pull-left {
   animation-name: pull-left;
 }
 
@@ -155,7 +159,8 @@ body {
   transition: opacity 0.25s;
 }
 
-.resize-handle:hover .glow-line {
+.resize-handle:hover .glow-line,
+.resize-handle.intro-active .glow-line {
   opacity: 1;
 }
 

@@ -4,72 +4,120 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { t, locales, localeNames, type Locale } from "@/lib/i18n";
+import { themes, getTheme, type Theme } from "@/lib/themes";
 
 interface MdFile {
   name: string;
   content: string;
 }
 
-function ThemeToggle({
-  dark,
-  onToggle,
-  label,
+function applyTheme(theme: Theme) {
+  const s = document.documentElement.style;
+  s.setProperty("--theme-bg", theme.bg);
+  s.setProperty("--theme-text", theme.text);
+  s.setProperty("--theme-heading", theme.heading);
+  s.setProperty("--theme-muted", theme.muted);
+  s.setProperty("--theme-link", theme.link);
+  s.setProperty("--theme-code-bg", theme.codeBg);
+  s.setProperty("--theme-border", theme.border);
+  s.setProperty("--theme-pre-border", theme.preBorder);
+  s.setProperty("--theme-blockquote-bg", theme.blockquoteBg);
+  s.setProperty("--theme-blockquote-border", theme.blockquoteBorder);
+  s.setProperty("--theme-table-head-bg", theme.tableHeadBg);
+}
+
+function ThemePicker({
+  current,
+  onChange,
+  theme,
 }: {
-  dark: boolean;
-  onToggle: () => void;
-  label: string;
+  current: string;
+  onChange: (id: string) => void;
+  theme: Theme;
 }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <button
-      onClick={onToggle}
-      className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${
-        dark
-          ? "bg-gray-800 hover:bg-gray-700 text-yellow-400"
-          : "bg-gray-100 hover:bg-gray-200 text-gray-500"
-      }`}
-      title={label}
-    >
-      {dark ? (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="5" />
-          <line x1="12" y1="1" x2="12" y2="3" />
-          <line x1="12" y1="21" x2="12" y2="23" />
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-          <line x1="1" y1="12" x2="3" y2="12" />
-          <line x1="21" y1="12" x2="23" y2="12" />
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
-      ) : (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors text-sm"
+        style={{
+          background: theme.category === "dark" ? "#2a2a2a" : "#f0f0f0",
+          color: theme.text,
+        }}
+        title="Theme"
+      >
+        {themes.find((t) => t.id === current)?.icon ?? "☀️"}
+      </button>
+      {open && (
+        <>
+          <div
+            className="fixed inset-0 z-20"
+            onClick={() => setOpen(false)}
+          />
+          <div
+            className="absolute right-0 top-full mt-2 z-30 rounded-xl shadow-lg border p-1.5 min-w-[180px]"
+            style={{
+              background: theme.bg,
+              borderColor: theme.border,
+            }}
+          >
+            {themes.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => {
+                  onChange(t.id);
+                  setOpen(false);
+                }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all"
+                style={{
+                  background:
+                    t.id === current
+                      ? theme.category === "dark"
+                        ? "rgba(255,255,255,0.08)"
+                        : "rgba(0,0,0,0.05)"
+                      : "transparent",
+                  color: theme.text,
+                }}
+              >
+                <span className="text-base">{t.icon}</span>
+                <span className="flex-1 text-left">{t.name}</span>
+                <span
+                  className="w-4 h-4 rounded-full border"
+                  style={{
+                    background: t.bg,
+                    borderColor: t.border,
+                  }}
+                />
+              </button>
+            ))}
+          </div>
+        </>
       )}
-    </button>
+    </div>
   );
 }
 
 function LangSelect({
   locale,
   onChange,
-  dark,
+  theme,
 }: {
   locale: Locale;
   onChange: (l: Locale) => void;
-  dark: boolean;
+  theme: Theme;
 }) {
   return (
     <select
       value={locale}
       onChange={(e) => onChange(e.target.value as Locale)}
-      className={`text-xs rounded-lg px-2 py-1.5 border transition-colors cursor-pointer appearance-none pr-6 bg-no-repeat bg-[length:12px] bg-[position:right_6px_center] ${
-        dark
-          ? "bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600"
-          : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
-      }`}
+      className="text-xs rounded-lg px-2 py-1.5 border transition-colors cursor-pointer appearance-none pr-6 bg-no-repeat bg-[length:12px] bg-[position:right_6px_center]"
       style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='${dark ? "%239ca3af" : "%236b7280"}' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+        background: theme.category === "dark" ? "#2a2a2a" : "#ffffff",
+        borderColor: theme.border,
+        color: theme.muted,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(theme.muted)}' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
       }}
     >
       {locales.map((l) => (
@@ -85,23 +133,34 @@ export default function Home() {
   const [files, setFiles] = useState<MdFile[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const [dark, setDark] = useState(false);
+  const [themeId, setThemeId] = useState("paper");
   const [locale, setLocale] = useState<Locale>("en");
   const [contentWidth, setContentWidth] = useState(768);
   const resizingRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const theme = getTheme(themeId);
+  const dark = theme.category === "dark";
   const i = t(locale);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("mdreader-theme");
-    if (savedTheme === "dark") {
-      setDark(true);
-      document.body.classList.add("dark");
+    const savedTheme = localStorage.getItem("mdreader-theme-id");
+    if (savedTheme) {
+      const th = getTheme(savedTheme);
+      setThemeId(th.id);
+      applyTheme(th);
+    } else {
+      applyTheme(getTheme("paper"));
     }
     const savedLocale = localStorage.getItem("mdreader-locale");
     if (savedLocale && locales.includes(savedLocale as Locale)) {
       setLocale(savedLocale as Locale);
+    } else {
+      // Auto-detect from browser language
+      const browserLang = navigator.language.split("-")[0] as Locale;
+      if (locales.includes(browserLang)) {
+        setLocale(browserLang);
+      }
     }
     const savedWidth = localStorage.getItem("mdreader-width");
     if (savedWidth) {
@@ -109,13 +168,11 @@ export default function Home() {
     }
   }, []);
 
-  const toggleTheme = () => {
-    setDark((prev) => {
-      const next = !prev;
-      document.body.classList.toggle("dark", next);
-      localStorage.setItem("mdreader-theme", next ? "dark" : "light");
-      return next;
-    });
+  const changeTheme = (id: string) => {
+    const th = getTheme(id);
+    setThemeId(th.id);
+    applyTheme(th);
+    localStorage.setItem("mdreader-theme-id", th.id);
   };
 
   const changeLocale = (l: Locale) => {
@@ -169,7 +226,7 @@ export default function Home() {
   };
 
   const startResize = useCallback(
-    (e: React.MouseEvent) => {
+    (e: React.MouseEvent, direction: "right" | "left") => {
       e.preventDefault();
       resizingRef.current = true;
       const startX = e.clientX;
@@ -177,7 +234,10 @@ export default function Home() {
 
       const onMouseMove = (ev: MouseEvent) => {
         if (!resizingRef.current) return;
-        const delta = ev.clientX - startX;
+        const delta =
+          direction === "right"
+            ? ev.clientX - startX
+            : startX - ev.clientX;
         const newWidth = Math.max(400, Math.min(1400, startWidth + delta * 2));
         setContentWidth(newWidth);
       };
@@ -200,19 +260,21 @@ export default function Home() {
 
   const activeFile = files[activeIndex] ?? null;
 
+  const signalColor = dark ? theme.link : theme.link;
+  const gripColor = dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)";
+
   return (
     <div
-      className={`min-h-screen flex flex-col transition-colors duration-200 ${
-        dark ? "bg-[#111111] text-[#e5e5e5]" : "bg-white text-[#1a1a1a]"
-      }`}
+      className="min-h-screen flex flex-col transition-colors duration-300"
+      style={{ background: theme.bg, color: theme.text }}
     >
       {/* Header */}
       <header
-        className={`border-b backdrop-blur-sm sticky top-0 z-10 transition-colors ${
-          dark
-            ? "border-gray-800 bg-[#111111]/90"
-            : "border-gray-100 bg-white/90"
-        }`}
+        className="border-b backdrop-blur-sm sticky top-0 z-10 transition-colors"
+        style={{
+          borderColor: theme.border,
+          background: `color-mix(in srgb, ${theme.bg} 90%, transparent)`,
+        }}
       >
         <nav className="mx-auto max-w-7xl px-6 py-3.5 flex items-center justify-between">
           <button
@@ -220,19 +282,15 @@ export default function Home() {
               setFiles([]);
               setActiveIndex(0);
             }}
-            className={`text-lg font-semibold tracking-tight transition-colors ${
-              dark
-                ? "text-white hover:text-blue-400"
-                : "text-gray-900 hover:text-blue-600"
-            }`}
+            className="text-lg font-semibold tracking-tight transition-colors"
+            style={{ color: theme.heading }}
           >
             MD Reader
           </button>
           <div className="flex items-center gap-2.5">
             <span
-              className={`text-xs items-center gap-1.5 hidden md:flex ${
-                dark ? "text-gray-500" : "text-gray-400"
-              }`}
+              className="text-xs items-center gap-1.5 hidden md:flex"
+              style={{ color: theme.muted }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -240,12 +298,8 @@ export default function Home() {
               </svg>
               {i.privacy}
             </span>
-            <LangSelect locale={locale} onChange={changeLocale} dark={dark} />
-            <ThemeToggle
-              dark={dark}
-              onToggle={toggleTheme}
-              label={dark ? i.lightMode : i.darkMode}
-            />
+            <LangSelect locale={locale} onChange={changeLocale} theme={theme} />
+            <ThemePicker current={themeId} onChange={changeTheme} theme={theme} />
           </div>
         </nav>
       </header>
@@ -254,9 +308,12 @@ export default function Home() {
       <main className="flex-1">
         {files.length === 0 ? (
           <div
-            className={`flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-6 transition-all duration-200 ${
-              dragging ? (dark ? "bg-blue-950/30" : "bg-blue-50") : ""
-            }`}
+            className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-6 transition-all duration-200"
+            style={{
+              background: dragging
+                ? `color-mix(in srgb, ${theme.link} 8%, ${theme.bg})`
+                : theme.bg,
+            }}
             onDragOver={(e) => {
               e.preventDefault();
               setDragging(true);
@@ -266,13 +323,13 @@ export default function Home() {
           >
             <div className="text-center max-w-md">
               <div
-                className={`mx-auto w-20 h-20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-200 ${
-                  dragging
-                    ? "bg-blue-100 scale-110"
-                    : dark
-                      ? "bg-gray-800/50"
-                      : "bg-gray-50"
-                }`}
+                className="mx-auto w-20 h-20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-200"
+                style={{
+                  background: dragging
+                    ? `color-mix(in srgb, ${theme.link} 15%, ${theme.bg})`
+                    : `color-mix(in srgb, ${theme.border} 50%, ${theme.bg})`,
+                  transform: dragging ? "scale(1.1)" : "scale(1)",
+                }}
               >
                 <svg
                   width="32"
@@ -283,9 +340,7 @@ export default function Home() {
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className={`transition-colors ${
-                    dragging ? "text-blue-500" : dark ? "text-gray-600" : "text-gray-300"
-                  }`}
+                  style={{ color: dragging ? theme.link : theme.muted }}
                 >
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                   <polyline points="14 2 14 8 20 8" />
@@ -296,13 +351,12 @@ export default function Home() {
               </div>
 
               <h1
-                className={`text-2xl font-bold tracking-tight mb-2 ${
-                  dark ? "text-white" : "text-gray-900"
-                }`}
+                className="text-2xl font-bold tracking-tight mb-2"
+                style={{ color: theme.heading }}
               >
                 {i.dropTitle}
               </h1>
-              <p className={`mb-8 leading-relaxed ${dark ? "text-gray-400" : "text-gray-500"}`}>
+              <p className="mb-8 leading-relaxed" style={{ color: theme.muted }}>
                 {i.dropDesc1}
                 <br />
                 {i.dropDesc2}
@@ -310,7 +364,11 @@ export default function Home() {
 
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 active:scale-[0.98] transition-all shadow-sm shadow-blue-600/20"
+                className="inline-flex items-center gap-2 px-6 py-3 text-white rounded-xl text-sm font-medium hover:brightness-110 active:scale-[0.98] transition-all shadow-sm"
+                style={{
+                  background: theme.link,
+                  boxShadow: `0 2px 8px color-mix(in srgb, ${theme.link} 25%, transparent)`,
+                }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -328,13 +386,16 @@ export default function Home() {
                 onChange={(e) => e.target.files && handleFiles(e.target.files)}
               />
 
-              <p className={`text-xs mt-4 ${dark ? "text-gray-600" : "text-gray-400"}`}>
+              <p className="text-xs mt-4" style={{ color: theme.muted }}>
                 {i.supported}
               </p>
             </div>
 
             {/* Trust Badges */}
-            <div className={`mt-20 flex flex-wrap justify-center gap-8 text-xs ${dark ? "text-gray-600" : "text-gray-400"}`}>
+            <div
+              className="mt-20 flex flex-wrap justify-center gap-8 text-xs"
+              style={{ color: theme.muted }}
+            >
               <span className="flex items-center gap-1.5">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 {i.zeroData}
@@ -364,14 +425,13 @@ export default function Home() {
             onDragLeave={() => setDragging(false)}
             onDrop={onDrop}
           >
-            {/* File Tabs */}
             {files.length > 1 && (
               <div
-                className={`border-b ${
-                  dark
-                    ? "border-gray-800 bg-[#151515]"
-                    : "border-gray-100 bg-gray-50/50"
-                }`}
+                className="border-b"
+                style={{
+                  borderColor: theme.border,
+                  background: `color-mix(in srgb, ${theme.border} 20%, ${theme.bg})`,
+                }}
               >
                 <div
                   className="mx-auto px-6 flex gap-1 overflow-x-auto py-2"
@@ -381,15 +441,21 @@ export default function Home() {
                     <button
                       key={file.name}
                       onClick={() => setActiveIndex(idx)}
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors ${
-                        idx === activeIndex
-                          ? dark
-                            ? "bg-gray-800 text-white shadow-sm"
-                            : "bg-white text-gray-900 shadow-sm"
-                          : dark
-                            ? "text-gray-500 hover:text-gray-300 hover:bg-gray-800/50"
-                            : "text-gray-500 hover:text-gray-700 hover:bg-white/60"
-                      }`}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors"
+                      style={{
+                        background:
+                          idx === activeIndex
+                            ? theme.bg
+                            : "transparent",
+                        color:
+                          idx === activeIndex
+                            ? theme.heading
+                            : theme.muted,
+                        boxShadow:
+                          idx === activeIndex
+                            ? "0 1px 3px rgba(0,0,0,0.08)"
+                            : "none",
+                      }}
                     >
                       {file.name.replace(/\.(md|markdown)$/, "")}
                       <span
@@ -397,11 +463,8 @@ export default function Home() {
                           e.stopPropagation();
                           removeFile(idx);
                         }}
-                        className={`ml-1 transition-colors ${
-                          dark
-                            ? "text-gray-600 hover:text-gray-400"
-                            : "text-gray-300 hover:text-gray-500"
-                        }`}
+                        style={{ color: theme.muted, opacity: 0.5 }}
+                        className="ml-1 hover:opacity-100 transition-opacity"
                       >
                         ×
                       </span>
@@ -411,22 +474,23 @@ export default function Home() {
               </div>
             )}
 
-            {/* Drag overlay */}
             {dragging && (
-              <div className="fixed inset-0 bg-blue-500/10 z-20 flex items-center justify-center pointer-events-none">
+              <div className="fixed inset-0 z-20 flex items-center justify-center pointer-events-none"
+                style={{ background: `color-mix(in srgb, ${theme.link} 8%, transparent)` }}
+              >
                 <div
-                  className={`px-6 py-4 rounded-xl shadow-lg text-sm font-medium border ${
-                    dark
-                      ? "bg-gray-900 text-blue-400 border-blue-900"
-                      : "bg-white text-blue-600 border-blue-100"
-                  }`}
+                  className="px-6 py-4 rounded-xl shadow-lg text-sm font-medium border"
+                  style={{
+                    background: theme.bg,
+                    color: theme.link,
+                    borderColor: theme.border,
+                  }}
                 >
                   {i.dropToAdd}
                 </div>
               </div>
             )}
 
-            {/* Markdown Content with resizable width */}
             {activeFile && (
               <div className="relative flex justify-center">
                 <article
@@ -434,25 +498,20 @@ export default function Home() {
                   style={{ maxWidth: contentWidth }}
                 >
                   <div
-                    className={`flex items-center justify-between mb-8 pb-4 border-b ${
-                      dark ? "border-gray-800" : "border-gray-100"
-                    }`}
+                    className="flex items-center justify-between mb-8 pb-4 border-b"
+                    style={{ borderColor: theme.border }}
                   >
                     <h1
-                      className={`text-2xl font-bold tracking-tight ${
-                        dark ? "text-white" : "text-gray-900"
-                      }`}
+                      className="text-2xl font-bold tracking-tight"
+                      style={{ color: theme.heading }}
                     >
                       {activeFile.name.replace(/\.(md|markdown)$/, "")}
                     </h1>
                     {files.length === 1 && (
                       <button
                         onClick={() => removeFile(0)}
-                        className={`text-xs transition-colors px-3 py-1.5 rounded-lg ${
-                          dark
-                            ? "text-gray-500 hover:text-red-400 hover:bg-red-950/30"
-                            : "text-gray-400 hover:text-red-500 hover:bg-red-50"
-                        }`}
+                        className="text-xs transition-colors px-3 py-1.5 rounded-lg hover:opacity-70"
+                        style={{ color: theme.muted }}
                       >
                         {i.close}
                       </button>
@@ -467,19 +526,16 @@ export default function Home() {
 
                 {/* Right resize handle */}
                 <div
-                  onMouseDown={startResize}
+                  onMouseDown={(e) => startResize(e, "right")}
                   className="resize-handle absolute top-0 h-full w-8 cursor-col-resize hidden md:flex items-start justify-center"
                   style={{ right: `calc(50% - ${contentWidth / 2 + 16}px)` }}
                   title="Drag to resize"
                 >
                   <div className="sticky top-1/2 flex items-center gap-[3px]">
-                    {/* Grip bar */}
                     <div
-                      className={`grip-bar w-[5px] h-16 rounded-full transition-colors ${
-                        dark ? "bg-gray-700" : "bg-gray-300"
-                      }`}
+                      className="grip-bar w-[5px] h-16 rounded-full"
+                      style={{ background: gripColor }}
                     />
-                    {/* Signal lines going right */}
                     <div className="flex items-center gap-[2px]">
                       {[0, 1, 2].map((j) => (
                         <div
@@ -491,12 +547,11 @@ export default function Home() {
                           }}
                         >
                           <div
-                            className={`rounded-full transition-colors ${
-                              dark ? "bg-blue-400" : "bg-blue-500"
-                            }`}
+                            className="rounded-full"
                             style={{
                               width: 2,
                               height: 20 + j * 10,
+                              background: signalColor,
                             }}
                           />
                         </div>
@@ -505,40 +560,14 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Left resize handle (mirror) */}
+                {/* Left resize handle */}
                 <div
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    resizingRef.current = true;
-                    const startX = e.clientX;
-                    const startWidth = contentWidth;
-
-                    const onMouseMove = (ev: MouseEvent) => {
-                      if (!resizingRef.current) return;
-                      const delta = startX - ev.clientX;
-                      const newWidth = Math.max(400, Math.min(1400, startWidth + delta * 2));
-                      setContentWidth(newWidth);
-                    };
-
-                    const onMouseUp = () => {
-                      resizingRef.current = false;
-                      setContentWidth((w) => {
-                        localStorage.setItem("mdreader-width", String(w));
-                        return w;
-                      });
-                      window.removeEventListener("mousemove", onMouseMove);
-                      window.removeEventListener("mouseup", onMouseUp);
-                    };
-
-                    window.addEventListener("mousemove", onMouseMove);
-                    window.addEventListener("mouseup", onMouseUp);
-                  }}
+                  onMouseDown={(e) => startResize(e, "left")}
                   className="resize-handle absolute top-0 h-full w-8 cursor-col-resize hidden md:flex items-start justify-center"
                   style={{ left: `calc(50% - ${contentWidth / 2 + 16}px)` }}
                   title="Drag to resize"
                 >
                   <div className="sticky top-1/2 flex items-center gap-[3px]">
-                    {/* Signal lines going left */}
                     <div className="flex items-center gap-[2px] flex-row-reverse">
                       {[0, 1, 2].map((j) => (
                         <div
@@ -550,22 +579,19 @@ export default function Home() {
                           }}
                         >
                           <div
-                            className={`rounded-full transition-colors ${
-                              dark ? "bg-blue-400" : "bg-blue-500"
-                            }`}
+                            className="rounded-full"
                             style={{
                               width: 2,
                               height: 20 + j * 10,
+                              background: signalColor,
                             }}
                           />
                         </div>
                       ))}
                     </div>
-                    {/* Grip bar */}
                     <div
-                      className={`grip-bar w-[5px] h-16 rounded-full transition-colors ${
-                        dark ? "bg-gray-700" : "bg-gray-300"
-                      }`}
+                      className="grip-bar w-[5px] h-16 rounded-full"
+                      style={{ background: gripColor }}
                     />
                   </div>
                 </div>
@@ -577,23 +603,29 @@ export default function Home() {
 
       {/* Footer */}
       <footer
-        className={`border-t ${
-          dark
-            ? "border-gray-800 bg-[#0e0e0e]"
-            : "border-gray-100 bg-gray-50/50"
-        }`}
+        className="border-t"
+        style={{
+          borderColor: theme.border,
+          background: `color-mix(in srgb, ${theme.border} 15%, ${theme.bg})`,
+        }}
       >
         <div
-          className={`mx-auto max-w-5xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs ${
-            dark ? "text-gray-600" : "text-gray-400"
-          }`}
+          className="mx-auto max-w-5xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs"
+          style={{ color: theme.muted }}
         >
           <span>{i.footerPrivacy}</span>
           <a
             href="https://github.com/fuloskop/mdreader"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-600 transition-colors"
+            className="transition-colors"
+            style={{ color: theme.muted }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.color = theme.link)
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = theme.muted)
+            }
           >
             GitHub
           </a>

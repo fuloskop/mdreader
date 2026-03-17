@@ -65,12 +65,21 @@ export const metadata: Metadata = {
     siteName: "LookMD",
     locale: "en_US",
     alternateLocale: ["tr_TR", "es_ES", "fr_FR", "de_DE", "pt_BR", "ja_JP", "ko_KR", "zh_CN"],
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "LookMD — Privacy-First Markdown Reader",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "LookMD — Privacy-First Markdown Reader",
     description:
       "Read Markdown files beautifully in your browser. No uploads, no tracking, no cookies.",
+    images: ["/og-image.png"],
   },
   alternates: {
     canonical: "https://lookmd.dev",

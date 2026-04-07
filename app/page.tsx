@@ -434,7 +434,7 @@ export default function Home() {
           </button>
           {hasNote && !isEditing && (
             <div
-              className="sticky-note absolute right-0 -top-2 max-w-[220px] px-3 py-2 rounded shadow-md z-10 text-xs leading-relaxed cursor-pointer"
+              className="sticky-note group/note absolute right-0 -top-2 max-w-[220px] px-3 py-2 rounded shadow-md z-10 text-xs leading-relaxed cursor-pointer"
               style={{
                 background: "#fef9c3",
                 color: "#713f12",
@@ -445,6 +445,21 @@ export default function Home() {
               onClick={() => setEditingNote(noteKey)}
             >
               {notes[noteKey]}
+              <button
+                className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-white opacity-0 group-hover/note:opacity-100 transition-opacity cursor-pointer"
+                style={{
+                  background: "#dc2626",
+                  fontSize: "10px",
+                  lineHeight: 1,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteNoteFromStorage(noteKey);
+                }}
+                title={i.deleteNote}
+              >
+                ×
+              </button>
             </div>
           )}
           {isEditing && (
@@ -852,6 +867,11 @@ export default function Home() {
                         h4: makeNoteable("h4"),
                         h5: makeNoteable("h5"),
                         h6: makeNoteable("h6"),
+                        li: makeNoteable("li"),
+                        blockquote: makeNoteable("blockquote"),
+                        pre: makeNoteable("pre"),
+                        table: makeNoteable("table"),
+                        hr: makeNoteable("hr"),
                       }}
                     >
                       {activeFile.content}

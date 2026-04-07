@@ -24,6 +24,68 @@ function extractText(node: any): string {
   return "";
 }
 
+function NoteInlineEditor({
+  initialText,
+  onSave,
+  onDelete,
+  onClose,
+  hasNote,
+  theme,
+  i,
+}: {
+  initialText: string;
+  onSave: (text: string) => void;
+  onDelete: () => void;
+  onClose: () => void;
+  hasNote: boolean;
+  theme: Theme;
+  i: any;
+}) {
+  const [text, setText] = useState(initialText);
+
+  return (
+    <div className="mt-2 mb-3 print:hidden" onClick={(e) => e.stopPropagation()}>
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder={i.notePlaceholder}
+        className="w-full px-3 py-2 rounded-lg text-sm border resize-none focus:outline-none"
+        style={{
+          background: theme.codeBg,
+          borderColor: theme.border,
+          color: theme.text,
+        }}
+        rows={3}
+        autoFocus
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+            onSave(text);
+          }
+          if (e.key === "Escape") onClose();
+        }}
+      />
+      <div className="flex gap-2 mt-1.5">
+        <button
+          onClick={() => onSave(text)}
+          className="px-3 py-1.5 rounded-md text-xs font-medium text-white cursor-pointer"
+          style={{ background: theme.link }}
+        >
+          {i.saveNote}
+        </button>
+        {hasNote && (
+          <button
+            onClick={onDelete}
+            className="px-3 py-1.5 rounded-md text-xs hover:opacity-70 cursor-pointer"
+            style={{ color: theme.muted }}
+          >
+            {i.deleteNote}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface MdFile {
   name: string;
   content: string;
@@ -176,7 +238,6 @@ export default function Home() {
   const [fontSize, setFontSize] = useState(18);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [editingNote, setEditingNote] = useState<string | null>(null);
-  const [noteText, setNoteText] = useState("");
   const resizingRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -305,7 +366,6 @@ export default function Home() {
       return next;
     });
     setEditingNote(null);
-    setNoteText("");
   };
 
   const deleteNoteFromStorage = (key: string) => {
@@ -316,7 +376,6 @@ export default function Home() {
       return next;
     });
     setEditingNote(null);
-    setNoteText("");
   };
 
   const downloadMd = () => {
@@ -348,19 +407,14 @@ export default function Home() {
           <button
             className={`note-toggle absolute right-0 top-0 w-6 h-6 rounded flex items-center justify-center${hasNote ? " has-note" : ""}`}
             style={{
-              color: theme.link,
+              color: hasNote ? "#92400e" : theme.link,
               background: hasNote
-                ? `color-mix(in srgb, ${theme.link} 10%, transparent)`
+                ? "#fef9c3"
                 : "transparent",
             }}
             onClick={(e) => {
               e.stopPropagation();
-              if (isEditing) {
-                setEditingNote(null);
-              } else {
-                setEditingNote(noteKey);
-                setNoteText(notes[noteKey] || "");
-              }
+              setEditingNote(isEditing ? null : noteKey);
             }}
             title={hasNote ? notes[noteKey].slice(0, 50) : i.addNote}
           >
@@ -380,61 +434,30 @@ export default function Home() {
           </button>
           {hasNote && !isEditing && (
             <div
-              className="mt-1 mb-3 px-3 py-2 rounded-lg text-sm border-l-2 cursor-pointer"
+              className="sticky-note absolute right-0 -top-2 max-w-[220px] px-3 py-2 rounded shadow-md z-10 text-xs leading-relaxed cursor-pointer"
               style={{
-                background: `color-mix(in srgb, ${theme.link} 6%, ${theme.bg})`,
-                borderColor: theme.link,
-                color: theme.muted,
-                fontSize: "0.85em",
+                background: "#fef9c3",
+                color: "#713f12",
+                border: "1px solid #fde68a",
+                boxShadow: "2px 3px 10px rgba(0,0,0,0.12)",
+                transform: "rotate(1deg)",
               }}
-              onClick={() => {
-                setEditingNote(noteKey);
-                setNoteText(notes[noteKey]);
-              }}
+              onClick={() => setEditingNote(noteKey)}
             >
               {notes[noteKey]}
             </div>
           )}
           {isEditing && (
-            <div className="mt-2 mb-3 print:hidden">
-              <textarea
-                value={noteText}
-                onChange={(e) => setNoteText(e.target.value)}
-                placeholder={i.notePlaceholder}
-                className="w-full px-3 py-2 rounded-lg text-sm border resize-none focus:outline-none"
-                style={{
-                  background: theme.bg,
-                  borderColor: theme.border,
-                  color: theme.text,
-                }}
-                rows={3}
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                    saveNoteToStorage(noteKey, noteText);
-                  }
-                  if (e.key === "Escape") setEditingNote(null);
-                }}
-              />
-              <div className="flex gap-2 mt-1.5">
-                <button
-                  onClick={() => saveNoteToStorage(noteKey, noteText)}
-                  className="px-3 py-1.5 rounded-md text-xs font-medium text-white cursor-pointer"
-                  style={{ background: theme.link }}
-                >
-                  {i.saveNote}
-                </button>
-                {hasNote && (
-                  <button
-                    onClick={() => deleteNoteFromStorage(noteKey)}
-                    className="px-3 py-1.5 rounded-md text-xs hover:opacity-70 cursor-pointer"
-                    style={{ color: theme.muted }}
-                  >
-                    {i.deleteNote}
-                  </button>
-                )}
-              </div>
-            </div>
+            <NoteInlineEditor
+              key={noteKey}
+              initialText={notes[noteKey] || ""}
+              onSave={(t) => saveNoteToStorage(noteKey, t)}
+              onDelete={() => deleteNoteFromStorage(noteKey)}
+              onClose={() => setEditingNote(null)}
+              hasNote={hasNote}
+              theme={theme}
+              i={i}
+            />
           )}
         </div>
       );

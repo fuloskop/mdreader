@@ -34,6 +34,12 @@ export interface Translations {
   footerPrivacy: string;
   lightMode: string;
   darkMode: string;
+  addNote: string;
+  saveNote: string;
+  deleteNote: string;
+  notePlaceholder: string;
+  downloadMd: string;
+  printPdf: string;
 }
 
 export const localeNames: Record<Locale, string> = {
@@ -74,6 +80,12 @@ const translations: Record<Locale, Translations> = {
     footerPrivacy: "Your files never leave your browser. Source code is open.",
     lightMode: "Light mode",
     darkMode: "Dark mode",
+    addNote: "Add note",
+    saveNote: "Save",
+    deleteNote: "Delete",
+    notePlaceholder: "Write your note...",
+    downloadMd: "Download .md",
+    printPdf: "Save as PDF",
   },
   tr: {
     dropTitle: "Markdown dosyanızı bırakın",
@@ -92,6 +104,12 @@ const translations: Record<Locale, Translations> = {
       "Dosyalarınız tarayıcınızdan asla çıkmaz. Kaynak kodu açıktır.",
     lightMode: "Açık mod",
     darkMode: "Koyu mod",
+    addNote: "Not ekle",
+    saveNote: "Kaydet",
+    deleteNote: "Sil",
+    notePlaceholder: "Notunuzu yazın...",
+    downloadMd: ".md indir",
+    printPdf: "PDF olarak kaydet",
   },
   es: {
     dropTitle: "Suelta tu archivo Markdown",
@@ -110,6 +128,12 @@ const translations: Record<Locale, Translations> = {
       "Tus archivos nunca salen de tu navegador. El código fuente es abierto.",
     lightMode: "Modo claro",
     darkMode: "Modo oscuro",
+    addNote: "Añadir nota",
+    saveNote: "Guardar",
+    deleteNote: "Eliminar",
+    notePlaceholder: "Escribe tu nota...",
+    downloadMd: "Descargar .md",
+    printPdf: "Guardar como PDF",
   },
   fr: {
     dropTitle: "Déposez votre fichier Markdown",
@@ -128,6 +152,12 @@ const translations: Record<Locale, Translations> = {
       "Vos fichiers ne quittent jamais votre navigateur. Le code source est ouvert.",
     lightMode: "Mode clair",
     darkMode: "Mode sombre",
+    addNote: "Ajouter une note",
+    saveNote: "Enregistrer",
+    deleteNote: "Supprimer",
+    notePlaceholder: "Écrivez votre note...",
+    downloadMd: "Télécharger .md",
+    printPdf: "Enregistrer en PDF",
   },
   de: {
     dropTitle: "Markdown-Datei hier ablegen",
@@ -146,6 +176,12 @@ const translations: Record<Locale, Translations> = {
       "Ihre Dateien verlassen nie Ihren Browser. Der Quellcode ist offen.",
     lightMode: "Heller Modus",
     darkMode: "Dunkler Modus",
+    addNote: "Notiz hinzufügen",
+    saveNote: "Speichern",
+    deleteNote: "Löschen",
+    notePlaceholder: "Schreiben Sie Ihre Notiz...",
+    downloadMd: ".md herunterladen",
+    printPdf: "Als PDF speichern",
   },
   pt: {
     dropTitle: "Solte seu arquivo Markdown",
@@ -164,6 +200,12 @@ const translations: Record<Locale, Translations> = {
       "Seus arquivos nunca saem do seu navegador. O código-fonte é aberto.",
     lightMode: "Modo claro",
     darkMode: "Modo escuro",
+    addNote: "Adicionar nota",
+    saveNote: "Salvar",
+    deleteNote: "Excluir",
+    notePlaceholder: "Escreva sua nota...",
+    downloadMd: "Baixar .md",
+    printPdf: "Salvar como PDF",
   },
   ru: {
     dropTitle: "Перетащите Markdown файл",
@@ -182,6 +224,12 @@ const translations: Record<Locale, Translations> = {
       "Ваши файлы никогда не покидают браузер. Исходный код открыт.",
     lightMode: "Светлая тема",
     darkMode: "Тёмная тема",
+    addNote: "Добавить заметку",
+    saveNote: "Сохранить",
+    deleteNote: "Удалить",
+    notePlaceholder: "Напишите заметку...",
+    downloadMd: "Скачать .md",
+    printPdf: "Сохранить как PDF",
   },
   zh: {
     dropTitle: "拖放您的 Markdown 文件",
@@ -199,6 +247,12 @@ const translations: Record<Locale, Translations> = {
     footerPrivacy: "您的文件永远不会离开浏览器。源代码是开放的。",
     lightMode: "浅色模式",
     darkMode: "深色模式",
+    addNote: "添加笔记",
+    saveNote: "保存",
+    deleteNote: "删除",
+    notePlaceholder: "写下你的笔记...",
+    downloadMd: "下载 .md",
+    printPdf: "保存为 PDF",
   },
   ja: {
     dropTitle: "Markdownファイルをドロップ",
@@ -217,6 +271,12 @@ const translations: Record<Locale, Translations> = {
       "ファイルはブラウザから出ることはありません。ソースコードは公開されています。",
     lightMode: "ライトモード",
     darkMode: "ダークモード",
+    addNote: "メモを追加",
+    saveNote: "保存",
+    deleteNote: "削除",
+    notePlaceholder: "メモを書く...",
+    downloadMd: ".md をダウンロード",
+    printPdf: "PDF として保存",
   },
   ko: {
     dropTitle: "마크다운 파일을 드롭하세요",
@@ -235,6 +295,12 @@ const translations: Record<Locale, Translations> = {
       "파일은 브라우저를 떠나지 않습니다. 소스 코드는 공개되어 있습니다.",
     lightMode: "라이트 모드",
     darkMode: "다크 모드",
+    addNote: "메모 추가",
+    saveNote: "저장",
+    deleteNote: "삭제",
+    notePlaceholder: "메모를 작성하세요...",
+    downloadMd: ".md 다운로드",
+    printPdf: "PDF로 저장",
   },
   ar: {
     dropTitle: "أسقط ملف Markdown الخاص بك",
@@ -252,6 +318,12 @@ const translations: Record<Locale, Translations> = {
     footerPrivacy: "ملفاتك لا تغادر متصفحك أبداً. الكود المصدري مفتوح.",
     lightMode: "الوضع الفاتح",
     darkMode: "الوضع الداكن",
+    addNote: "إضافة ملاحظة",
+    saveNote: "حفظ",
+    deleteNote: "حذف",
+    notePlaceholder: "اكتب ملاحظتك...",
+    downloadMd: "تحميل .md",
+    printPdf: "حفظ كـ PDF",
   },
   hi: {
     dropTitle: "अपनी Markdown फ़ाइल यहाँ छोड़ें",
@@ -270,6 +342,12 @@ const translations: Record<Locale, Translations> = {
       "आपकी फ़ाइलें कभी ब्राउज़र से बाहर नहीं जातीं। स्रोत कोड खुला है।",
     lightMode: "लाइट मोड",
     darkMode: "डार्क मोड",
+    addNote: "नोट जोड़ें",
+    saveNote: "सहेजें",
+    deleteNote: "हटाएं",
+    notePlaceholder: "अपना नोट लिखें...",
+    downloadMd: ".md डाउनलोड करें",
+    printPdf: "PDF के रूप में सहेजें",
   },
   it: {
     dropTitle: "Trascina il tuo file Markdown",
@@ -288,6 +366,12 @@ const translations: Record<Locale, Translations> = {
       "I tuoi file non lasciano mai il browser. Il codice sorgente è aperto.",
     lightMode: "Modalità chiara",
     darkMode: "Modalità scura",
+    addNote: "Aggiungi nota",
+    saveNote: "Salva",
+    deleteNote: "Elimina",
+    notePlaceholder: "Scrivi la tua nota...",
+    downloadMd: "Scarica .md",
+    printPdf: "Salva come PDF",
   },
   nl: {
     dropTitle: "Sleep je Markdown-bestand hierheen",
@@ -306,6 +390,12 @@ const translations: Record<Locale, Translations> = {
       "Je bestanden verlaten nooit je browser. De broncode is open.",
     lightMode: "Lichte modus",
     darkMode: "Donkere modus",
+    addNote: "Notitie toevoegen",
+    saveNote: "Opslaan",
+    deleteNote: "Verwijderen",
+    notePlaceholder: "Schrijf je notitie...",
+    downloadMd: ".md downloaden",
+    printPdf: "Opslaan als PDF",
   },
   pl: {
     dropTitle: "Upuść plik Markdown",
@@ -324,6 +414,12 @@ const translations: Record<Locale, Translations> = {
       "Twoje pliki nigdy nie opuszczają przeglądarki. Kod źródłowy jest otwarty.",
     lightMode: "Tryb jasny",
     darkMode: "Tryb ciemny",
+    addNote: "Dodaj notatkę",
+    saveNote: "Zapisz",
+    deleteNote: "Usuń",
+    notePlaceholder: "Napisz notatkę...",
+    downloadMd: "Pobierz .md",
+    printPdf: "Zapisz jako PDF",
   },
   uk: {
     dropTitle: "Перетягніть файл Markdown",
@@ -342,6 +438,12 @@ const translations: Record<Locale, Translations> = {
       "Ваші файли ніколи не залишають браузер. Вихідний код відкритий.",
     lightMode: "Світла тема",
     darkMode: "Темна тема",
+    addNote: "Додати нотатку",
+    saveNote: "Зберегти",
+    deleteNote: "Видалити",
+    notePlaceholder: "Напишіть нотатку...",
+    downloadMd: "Завантажити .md",
+    printPdf: "Зберегти як PDF",
   },
   sv: {
     dropTitle: "Släpp din Markdown-fil",
@@ -360,6 +462,12 @@ const translations: Record<Locale, Translations> = {
       "Dina filer lämnar aldrig din webbläsare. Källkoden är öppen.",
     lightMode: "Ljust läge",
     darkMode: "Mörkt läge",
+    addNote: "Lägg till anteckning",
+    saveNote: "Spara",
+    deleteNote: "Ta bort",
+    notePlaceholder: "Skriv din anteckning...",
+    downloadMd: "Ladda ner .md",
+    printPdf: "Spara som PDF",
   },
   id: {
     dropTitle: "Letakkan file Markdown Anda",
@@ -378,6 +486,12 @@ const translations: Record<Locale, Translations> = {
       "File Anda tidak pernah meninggalkan browser. Kode sumber terbuka.",
     lightMode: "Mode terang",
     darkMode: "Mode gelap",
+    addNote: "Tambah catatan",
+    saveNote: "Simpan",
+    deleteNote: "Hapus",
+    notePlaceholder: "Tulis catatan Anda...",
+    downloadMd: "Unduh .md",
+    printPdf: "Simpan sebagai PDF",
   },
 };
 

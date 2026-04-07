@@ -7,6 +7,23 @@ import rehypeRaw from "rehype-raw";
 import { t, locales, localeNames, type Locale } from "@/lib/i18n";
 import { themes, getTheme, type Theme } from "@/lib/themes";
 
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let j = 0; j < Math.min(str.length, 200); j++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(j);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+function extractText(node: any): string {
+  if (typeof node === "string") return node;
+  if (typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (node?.props?.children) return extractText(node.props.children);
+  return "";
+}
+
 interface MdFile {
   name: string;
   content: string;
@@ -156,6 +173,10 @@ export default function Home() {
   const [themeId, setThemeId] = useState("soft-dark");
   const [locale, setLocale] = useState<Locale>("en");
   const [contentWidth, setContentWidth] = useState(768);
+  const [fontSize, setFontSize] = useState(18);
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [editingNote, setEditingNote] = useState<string | null>(null);
+  const [noteText, setNoteText] = useState("");
   const resizingRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -185,6 +206,16 @@ export default function Home() {
     const savedWidth = localStorage.getItem("mdreader-width");
     if (savedWidth) {
       setContentWidth(Math.max(400, Math.min(1400, parseInt(savedWidth))));
+    }
+    const savedFontSize = localStorage.getItem("mdreader-font-size");
+    if (savedFontSize) {
+      setFontSize(Math.max(12, Math.min(28, parseInt(savedFontSize))));
+    }
+    const savedNotes = localStorage.getItem("mdreader-notes");
+    if (savedNotes) {
+      try {
+        setNotes(JSON.parse(savedNotes));
+      } catch {}
     }
 
     // Enable transitions only after first paint
@@ -252,6 +283,162 @@ export default function Home() {
   const changeLocale = (l: Locale) => {
     setLocale(l);
     localStorage.setItem("mdreader-locale", l);
+  };
+
+  const changeFontSize = (delta: number) => {
+    setFontSize((prev) => {
+      const next = Math.max(12, Math.min(28, prev + delta));
+      localStorage.setItem("mdreader-font-size", String(next));
+      return next;
+    });
+  };
+
+  const saveNoteToStorage = (key: string, text: string) => {
+    setNotes((prev) => {
+      const next = { ...prev };
+      if (text.trim()) {
+        next[key] = text;
+      } else {
+        delete next[key];
+      }
+      localStorage.setItem("mdreader-notes", JSON.stringify(next));
+      return next;
+    });
+    setEditingNote(null);
+    setNoteText("");
+  };
+
+  const deleteNoteFromStorage = (key: string) => {
+    setNotes((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      localStorage.setItem("mdreader-notes", JSON.stringify(next));
+      return next;
+    });
+    setEditingNote(null);
+    setNoteText("");
+  };
+
+  const downloadMd = () => {
+    if (!activeFile) return;
+    const blob = new Blob([activeFile.content], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = activeFile.name;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const printPdf = () => {
+    window.print();
+  };
+
+  const makeNoteable = (tag: string) => {
+    return function Noteable({ children, ...props }: any) {
+      const text = extractText(children);
+      const noteKey = `${activeFile?.name}::${tag}::${simpleHash(text)}`;
+      const hasNote = !!notes[noteKey];
+      const isEditing = editingNote === noteKey;
+      const Tag = tag as any;
+
+      return (
+        <div className="relative group">
+          <Tag {...props}>{children}</Tag>
+          <button
+            className={`note-toggle absolute right-0 top-0 w-6 h-6 rounded flex items-center justify-center${hasNote ? " has-note" : ""}`}
+            style={{
+              color: theme.link,
+              background: hasNote
+                ? `color-mix(in srgb, ${theme.link} 10%, transparent)`
+                : "transparent",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (isEditing) {
+                setEditingNote(null);
+              } else {
+                setEditingNote(noteKey);
+                setNoteText(notes[noteKey] || "");
+              }
+            }}
+            title={hasNote ? notes[noteKey].slice(0, 50) : i.addNote}
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill={hasNote ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+          </button>
+          {hasNote && !isEditing && (
+            <div
+              className="mt-1 mb-3 px-3 py-2 rounded-lg text-sm border-l-2 cursor-pointer"
+              style={{
+                background: `color-mix(in srgb, ${theme.link} 6%, ${theme.bg})`,
+                borderColor: theme.link,
+                color: theme.muted,
+                fontSize: "0.85em",
+              }}
+              onClick={() => {
+                setEditingNote(noteKey);
+                setNoteText(notes[noteKey]);
+              }}
+            >
+              {notes[noteKey]}
+            </div>
+          )}
+          {isEditing && (
+            <div className="mt-2 mb-3 print:hidden">
+              <textarea
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                placeholder={i.notePlaceholder}
+                className="w-full px-3 py-2 rounded-lg text-sm border resize-none focus:outline-none"
+                style={{
+                  background: theme.bg,
+                  borderColor: theme.border,
+                  color: theme.text,
+                }}
+                rows={3}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                    saveNoteToStorage(noteKey, noteText);
+                  }
+                  if (e.key === "Escape") setEditingNote(null);
+                }}
+              />
+              <div className="flex gap-2 mt-1.5">
+                <button
+                  onClick={() => saveNoteToStorage(noteKey, noteText)}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium text-white cursor-pointer"
+                  style={{ background: theme.link }}
+                >
+                  {i.saveNote}
+                </button>
+                {hasNote && (
+                  <button
+                    onClick={() => deleteNoteFromStorage(noteKey)}
+                    className="px-3 py-1.5 rounded-md text-xs hover:opacity-70 cursor-pointer"
+                    style={{ color: theme.muted }}
+                  >
+                    {i.deleteNote}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
   };
 
   const handleFilesFromPaste = (fileList: FileList) => {
@@ -537,7 +724,7 @@ export default function Home() {
           >
             {files.length > 1 && (
               <div
-                className="border-b"
+                className="border-b print:hidden"
                 style={{
                   borderColor: theme.border,
                   background: `color-mix(in srgb, ${theme.border} 20%, ${theme.bg})`,
@@ -620,15 +807,30 @@ export default function Home() {
                     {files.length === 1 && (
                       <button
                         onClick={() => removeFile(0)}
-                        className="text-xs transition-colors px-3 py-1.5 rounded-lg hover:opacity-70"
+                        className="text-xs transition-colors px-3 py-1.5 rounded-lg hover:opacity-70 print:hidden"
                         style={{ color: theme.muted }}
                       >
                         {i.close}
                       </button>
                     )}
                   </div>
-                  <div className="prose prose-lg max-w-none">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                  <div
+                    className="prose prose-lg max-w-none"
+                    style={{ fontSize }}
+                  >
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeRaw]}
+                      components={{
+                        p: makeNoteable("p"),
+                        h1: makeNoteable("h1"),
+                        h2: makeNoteable("h2"),
+                        h3: makeNoteable("h3"),
+                        h4: makeNoteable("h4"),
+                        h5: makeNoteable("h5"),
+                        h6: makeNoteable("h6"),
+                      }}
+                    >
                       {activeFile.content}
                     </ReactMarkdown>
                   </div>
@@ -698,6 +900,78 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      {/* Floating Toolbar */}
+      {activeFile && (
+        <div
+          className="floating-toolbar fixed top-20 right-3 md:right-4 z-10 flex flex-col gap-1 p-1.5 rounded-xl shadow-lg border"
+          style={{
+            background: theme.bg,
+            borderColor: theme.border,
+            boxShadow: `0 4px 20px ${dark ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.08)"}`,
+          }}
+        >
+          <button
+            onClick={() => changeFontSize(2)}
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold transition-colors hover:opacity-80 cursor-pointer"
+            style={{
+              background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+              color: theme.text,
+            }}
+            title="Font +"
+          >
+            A+
+          </button>
+          <button
+            onClick={() => changeFontSize(-2)}
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold transition-colors hover:opacity-80 cursor-pointer"
+            style={{
+              background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+              color: theme.text,
+            }}
+            title="Font −"
+          >
+            A−
+          </button>
+          <div
+            className="text-center text-[10px] py-0.5"
+            style={{ color: theme.muted }}
+          >
+            {fontSize}
+          </div>
+          <div className="h-px my-0.5" style={{ background: theme.border }} />
+          <button
+            onClick={downloadMd}
+            className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors hover:opacity-80 cursor-pointer"
+            style={{
+              background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+              color: theme.text,
+            }}
+            title={i.downloadMd}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+          </button>
+          <button
+            onClick={printPdf}
+            className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors hover:opacity-80 cursor-pointer"
+            style={{
+              background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+              color: theme.text,
+            }}
+            title={i.printPdf}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Footer */}
       <footer
